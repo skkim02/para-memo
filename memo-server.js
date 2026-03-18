@@ -2,7 +2,9 @@ const express = require("express");
 const Database = require("better-sqlite3");
 
 // DB 생성 + 테이블 만들기
-const db = new Database("memo.db");
+const path = require("path");
+const dbPath = process.env.DB_PATH || path.join(__dirname, "memo.db");
+const db = new Database(dbPath);
 db.exec(`
   CREATE TABLE IF NOT EXISTS memos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
