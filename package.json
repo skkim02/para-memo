@@ -1,0 +1,17 @@
+{
+  "name": "para-memo",
+  "version": "1.0.0",
+  "description": "PARA 메모 서버",
+  "main": "memo-server.js",
+  "scripts": {
+    "start": "node memo-server.js"
+  },
+  "keywords": [],
+  "author": "skkim",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "express": "^5.2.1"
+  }
+}
