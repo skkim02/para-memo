@@ -53,6 +53,14 @@ app.get("/", (req, res) => {
       <hr style="margin: 24px 0;">
       <h2>메모 목록</h2>
       ${memoList}
+      <script>
+        document.querySelector("textarea").addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            e.target.form.submit();
+          }
+        });
+      </script>
     </body>
     </html>
   `);
