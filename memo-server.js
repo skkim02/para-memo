@@ -106,8 +106,14 @@ app.get("/", (req, res) => {
       </div>
 
       <div class="section">
-        <h2>💡 참고 / 아이디어 (${refs.length})</h2>
-        ${refs.length ? refs.map(m => renderMemo(m, false)).join("") : '<div class="empty">없음</div>'}
+        <h2>
+          <span class="toggle-done" onclick="document.getElementById('refList').style.display = document.getElementById('refList').style.display === 'none' ? 'block' : 'none'">
+            💡 참고 / 아이디어 (${refs.length}) ▾
+          </span>
+        </h2>
+        <div id="refList" style="display:none;">
+          ${refs.length ? refs.map(m => renderMemo(m, false)).join("") : '<div class="empty">없음</div>'}
+        </div>
       </div>
 
       <div class="section">
