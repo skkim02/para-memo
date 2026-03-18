@@ -20,6 +20,7 @@ try { db.exec("ALTER TABLE memos ADD COLUMN done INTEGER DEFAULT 0"); } catch(e)
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 function renderMemo(m, showCheck) {
   const checked = m.done ? "checked" : "";
@@ -46,6 +47,11 @@ app.get("/", (req, res) => {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+      <meta name="theme-color" content="#333333">
+      <link rel="manifest" href="/manifest.json">
+      <link rel="apple-touch-icon" href="/icon.svg">
       <title>PARA 메모</title>
       <style>
         body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; color: #333; }
@@ -88,6 +94,10 @@ app.get("/", (req, res) => {
       </div>
 
       <script>
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("/sw.js");
+        }
+
         document.querySelector("textarea").addEventListener("keydown", (e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
