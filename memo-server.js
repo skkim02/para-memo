@@ -1,6 +1,34 @@
 const express = require("express");
 const Database = require("better-sqlite3");
 const path = require("path");
+const OpenAI = require("openai");
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+async function classify(content) {
+  try {
+    const res = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `메모를 PARA 방법론에 따라 분류해. 반드시 아래 중 하나만 답해:
+- todo: 해야 할 일, 약속, 일정, 행동이 필요한 것
+- reference: 생각, 아이디어, 명언, 참고 자료, 정보, 메모
+
+한 단어만 답해.`
+        },
+        { role: "user", content }
+      ],
+      max_tokens: 10
+    });
+    const answer = res.choices[0].message.content.trim().toLowerCase();
+    return answer.includes("reference") ? "reference" : "todo";
+  } catch (e) {
+    console.error("AI 분류 실패:", e.message);
+    return "todo";
+  }
+}
 
 // DB 생성 + 테이블 만들기
 const dbPath = process.env.DB_PATH || path.join(__dirname, "memo.db");
@@ -118,11 +146,12 @@ app.get("/", (req, res) => {
   `);
 });
 
-// 메모 저장
-app.post("/memo", (req, res) => {
+// 메모 저장 (AI 분류)
+app.post("/memo", async (req, res) => {
   const { content } = req.body;
   if (!content) return res.status(400).send("내용을 입력하세요");
-  db.prepare("INSERT INTO memos (content, category) VALUES (?, 'todo')").run(content);
+  const category = await classify(content);
+  db.prepare("INSERT INTO memos (content, category) VALUES (?, ?)").run(content, category);
   res.redirect("/");
 });
 
